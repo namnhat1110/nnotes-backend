@@ -5,7 +5,6 @@ const noteSchema = Schema(
     {
         title: { type: String, require: false },
         content: { type: String, require: false },
-
         author: {
             type: Schema.Types.ObjectId,
             ref: "users",

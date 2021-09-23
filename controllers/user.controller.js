@@ -23,7 +23,7 @@ const userController = {};
 userController.getCurrentUser = async (req, res, next) => {
     try {
         const userId = req.userId;
-        const user = await Users.findById(userId)
+        const user = await Users.findById(userId).populate('notes')
 
         utilsHelper.sendResponse(
             res,

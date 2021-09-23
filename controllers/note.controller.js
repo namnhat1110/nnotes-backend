@@ -9,7 +9,7 @@ const notesController = {};
 notesController.getNotes = async (req, res, next) => {
 
     try {
-        const notes = await Notes.find({ isDeleted: false });
+        const notes = await Notes.find({ isDeleted: false }).populate('author');
         utilsHelper.sendResponse(
             res,
             200,
