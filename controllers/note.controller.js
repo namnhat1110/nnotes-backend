@@ -44,10 +44,12 @@ notesController.getNote = async (req, res, next) => {
 notesController.createNote = async (req, res, next) => {
     try {
         const { title, content } = req.body;
+        const userId = req.userId
 
         const note = await Notes.create({
             title,
-            content
+            content,
+            author: userId
         });
         utilsHelper.sendResponse(
             res,
