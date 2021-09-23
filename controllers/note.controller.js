@@ -9,7 +9,8 @@ const notesController = {};
 notesController.getNotes = async (req, res, next) => {
 
     try {
-        const notes = await Notes.find({ isDeleted: false }).populate('author');
+        const userId = req.userId
+        const notes = await Notes.find({ isDeleted: false, author: mongoose.Types.ObjectId(userId) });
         utilsHelper.sendResponse(
             res,
             200,
