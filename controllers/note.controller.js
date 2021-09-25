@@ -24,6 +24,24 @@ notesController.getNotes = async (req, res, next) => {
     }
 };
 
+notesController.getCollabNotes = async (req, res, next) => {
+
+    try {
+        const userId = req.userId
+        const notes = await Notes.find({ isDeleted: false, collaborators: mongoose.Types.ObjectId(userId) });
+        utilsHelper.sendResponse(
+            res,
+            200,
+            true,
+            { notes },
+            null,
+            "Notes found"
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+
 notesController.getNote = async (req, res, next) => {
     try {
         const noteId = req.params.noteId;

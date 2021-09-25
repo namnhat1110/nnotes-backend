@@ -7,6 +7,10 @@ const authMiddleware = require('../middlewares/authentication');
 // GET /notes
 router.get("/", authMiddleware.loginRequired, notesController.getNotes);
 
+// GET /notes
+router.get("/collab", authMiddleware.loginRequired, notesController.getCollabNotes);
+
+
 // GET /notes/{id}
 router.get("/:noteId", authMiddleware.loginRequired, notesController.getNote);
 
