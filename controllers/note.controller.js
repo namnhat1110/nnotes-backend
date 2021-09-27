@@ -9,9 +9,9 @@ const notesController = {};
 notesController.getNotes = async (req, res, next) => {
   try {
     const userId = req.userId;
-    let notes
-    let totalNotes
-    let { search } = { ...req.query }
+    let notes;
+    let totalNotes;
+    let { search } = { ...req.query };
 
     if (search) {
       totalNotes = await Notes.find({
@@ -89,14 +89,18 @@ notesController.getNote = async (req, res, next) => {
 
 notesController.createNote = async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, tags } = req.body;
     const userId = req.userId;
 
     const note = await Notes.create({
       title,
       content,
+      tags: utilsHelper.unique(tags),
       author: userId,
     });
+
+    if (!note) return next(new Error("Create Note unsuccessful"));
+
     utilsHelper.sendResponse(res, 200, true, { note }, null, "Note created");
   } catch (error) {
     next(error);
@@ -106,20 +110,21 @@ notesController.createNote = async (req, res, next) => {
 notesController.putNote = async (req, res, next) => {
   try {
     const noteId = req.params.noteId;
-    const { title, content } = req.body;
+    const { title, content, tags } = req.body;
 
     const note = await Notes.findByIdAndUpdate(
       noteId,
       {
         title,
         content,
+        tags: utilsHelper.unique(tags),
       },
       {
         new: true,
       }
     );
     if (!note) {
-      return next(new Error("Product not found"));
+      return next(new Error("Update Note unsuccessful"));
     }
 
     utilsHelper.sendResponse(res, 200, true, { note }, null, "Product updated");
@@ -181,6 +186,29 @@ notesController.inviteCollaborator = async (req, res, next) => {
       { updatedNote },
       null,
       "Collaborator invited"
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+notesController.getAllTags = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+    const notes = await Notes.find({ author: mongoose.Types.ObjectId(userId) });
+
+    const allTags = notes.reduce(
+      (acc, note) => (note.tags ? acc.concat(note.tags) : acc),
+      []
+    );
+
+    utilsHelper.sendResponse(
+      res,
+      200,
+      true,
+      { tags: utilsHelper.unique(allTags) },
+      null,
+      "Notes found"
     );
   } catch (error) {
     next(error);
