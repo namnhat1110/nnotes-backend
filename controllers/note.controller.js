@@ -9,15 +9,50 @@ const notesController = {};
 notesController.getNotes = async (req, res, next) => {
   try {
     const userId = req.userId;
-    const notes = await Notes.find({
-      isDeleted: false,
-      author: mongoose.Types.ObjectId(userId),
-    });
+    let notes
+    let totalNotes
+    let { search } = { ...req.query }
+
+    if (search) {
+      totalNotes = await Notes.find({
+        title: { $regex: new RegExp(search, "i") },
+      }).countDocuments();
+
+      notes = await Notes.find({
+        title: { $regex: new RegExp(search, "i") },
+        isDeleted: false,
+        author: mongoose.Types.ObjectId(userId),
+      });
+    } else {
+      notes = await Notes.find({
+        isDeleted: false,
+        author: mongoose.Types.ObjectId(userId),
+      });
+    }
     utilsHelper.sendResponse(res, 200, true, { notes }, null, "Notes found");
   } catch (error) {
     next(error);
   }
 };
+
+// notesController.getSearchedNotes = async (req, res, next) => {
+//   try {
+//     const userId = req.userId;
+
+//     const query = {};
+//     if (req.query.search) {
+//       query.title = {
+//         $regex: req.query.search,
+//         $options: "i",
+//       };
+//     }
+
+//     const notes = await Notes.find(query);
+//     utilsHelper.sendResponse(res, 200, true, { notes }, null, "Notes found");
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 notesController.getCollabNotes = async (req, res, next) => {
   try {
