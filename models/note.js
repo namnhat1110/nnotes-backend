@@ -15,7 +15,9 @@ const noteSchema = Schema(
         ref: "users",
       },
     ],
-    tags: [String],
+    tags: [
+      { type: String, require: false }
+    ],
     isPrivate: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
   },

@@ -208,7 +208,7 @@ notesController.getAllTags = async (req, res, next) => {
       true,
       { tags: utilsHelper.unique(allTags) },
       null,
-      "Notes found"
+      "Tags found"
     );
   } catch (error) {
     next(error);
