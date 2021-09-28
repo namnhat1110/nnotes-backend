@@ -19,6 +19,13 @@ router.get(
 // GET all tags /notes/tags
 router.get("/tags", authMiddleware.loginRequired, notesController.getAllTags);
 
+// GET all tags of collaborative notes /notes/collab-tags
+router.get(
+  "/collab-tags",
+  authMiddleware.loginRequired,
+  notesController.getAllCollabTags
+);
+
 // GET /notes/{id}
 router.get("/:noteId", authMiddleware.loginRequired, notesController.getNote);
 
