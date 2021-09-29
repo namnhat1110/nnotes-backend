@@ -21,54 +21,54 @@ const userController = {};
 // };
 
 userController.getCurrentUser = async (req, res, next) => {
-    try {
-        const userId = req.userId;
-        const user = await Users.findById(userId).populate('notes')
+  try {
+    const userId = req.userId;
+    const user = await Users.findById(userId).populate("notes");
 
-        utilsHelper.sendResponse(
-            res,
-            200,
-            true,
-            { user },
-            null,
-            "Get detail of single user"
-        );
-    } catch (error) {
-        next(error);
-    }
-}
+    utilsHelper.sendResponse(
+      res,
+      200,
+      true,
+      { user },
+      null,
+      "Get detail of single user"
+    );
+  } catch (error) {
+    next(error);
+  }
+};
 
 userController.updateUser = async (req, res, next) => {
-    try {
-        const userId = req.params.userId;
-        const { username, email, password } = req.body;
+  try {
+    const userId = req.params.userId;
+    const { username, email, password } = req.body;
 
-        const user = await Users.findByIdAndUpdate(
-            userId,
-            {
-                username,
-                email,
-                password
-            },
-            {
-                new: true,
-            }
-        );
-        if (!user) {
-            return next(new Error("User not found"));
-        }
-
-        utilsHelper.sendResponse(
-            res,
-            200,
-            true,
-            { user },
-            null,
-            "User info updated"
-        );
-    } catch (error) {
-        next(error);
+    const user = await Users.findByIdAndUpdate(
+      userId,
+      {
+        username,
+        email,
+        password,
+      },
+      {
+        new: true,
+      }
+    );
+    if (!user) {
+      return next(new Error("User not found"));
     }
+
+    utilsHelper.sendResponse(
+      res,
+      200,
+      true,
+      { user },
+      null,
+      "User info updated"
+    );
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = userController;
