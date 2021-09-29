@@ -14,6 +14,7 @@ const socketTypes = {
   MSG_INIT: "MESSAGE_INIT",
   MSG_SEND: "MESSAGE_SEND",
   MSG_RECEIVE: "MESSAGE_RECEIVE",
+  NOTE_UPDATE: "NOTE_UPDATE",
 };
 
 io.use((socket, next) => {
@@ -91,6 +92,28 @@ io.on("connection", async function (socket) {
           if (onlineUsers[userId]) {
             io.to(onlineUsers[userId]).emit(socketTypes.NOTIFICATION, {
               newComment: comment,
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  socket.on(socketTypes.NOTE_UPDATE, async (msg) => {
+    try {
+      if (msg.noteId) {
+        console.log(msg.noteId);
+        const note = await Notes.findById(msg.noteId);
+        const toUsers = [
+          note.author.toString(),
+          ...note.collaborators.map((id) => id.toString()),
+        ];
+        toUsers.forEach((userId) => {
+          if (onlineUsers[userId]) {
+            io.to(onlineUsers[userId]).emit(socketTypes.NOTIFICATION, {
+              updatedNote: note,
             });
           }
         });
